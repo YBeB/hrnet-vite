@@ -11,8 +11,8 @@ const App = () => {
       <Router>
         <NavBar/>
         <Routes>
-          <Route path="/hrnet" element={<CurrentEmployees />} />
-          <Route path="/hrnet/create" element={<CreateEmployee />} />
+          <Route path="/hrnet-vite" element={<CurrentEmployees />} />
+          <Route path="/hrnet-vite/create" element={<CreateEmployee />} />
         </Routes>
       </Router>
     </EmployeeProvider>
