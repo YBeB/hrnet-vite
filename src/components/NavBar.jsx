@@ -11,7 +11,7 @@ const NavBar = () => {
       <ul className="navbar-links">
         <li>
           <NavLink
-            to="/"
+            to="/hrnet-vite/"
             className={({ isActive }) => (isActive ? "active-link" : "")}
           >
             Current Employees
@@ -19,7 +19,7 @@ const NavBar = () => {
         </li>
         <li>
           <NavLink
-            to="/create"
+            to="/hrnet-vite/create"
             className={({ isActive }) => (isActive ? "active-link" : "")}
           >
             Create Employee
