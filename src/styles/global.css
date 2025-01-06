@@ -5,12 +5,7 @@ header { background-color: #007bff; color: white; padding: 15px 20px; text-align
 button { background-color: #556B2F; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 1em; cursor: pointer; margin: 5px 0; }
 button:hover { background-color: #6B8E23; }
 button:disabled { background-color: #ccc; cursor: not-allowed; }
-.form-container { display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #F4F4F4; }
-form { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 500px; }
-form label { font-weight: bold; }
-form input, form select { background-color: #FFF; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em; color: #333; }
-form input:focus, form select:focus { outline: none; border-color: #007bff; box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); }
-.error { color: red; font-size: 0.9em; margin-top: -10px; }
+
 table { width: 100%; border-collapse: collapse; margin-top: 20px; }
 table th, table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
 table th { background-color: #556B2F; color: white; }
@@ -28,4 +23,46 @@ select{
 color:black;
 
 
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #F4F4F4;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+}
+
+form label {
+    font-weight: bold;
+}
+
+form input,
+form select {
+    background-color: #FFF;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #333;
+}
+
+form input:focus,
+form select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.error {
+    color: red;
+    font-size: 0.9em;
+    margin-top: -15px;
 }
