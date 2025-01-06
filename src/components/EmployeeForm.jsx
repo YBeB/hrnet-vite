@@ -2,15 +2,17 @@ import { useState } from "react";
 import Select from "react-select";
 import Modal from "custom-react-modal-by-you";
 import "custom-react-modal-by-you/dist/Modal.css";
-import dayjs from "dayjs"; 
+import dayjs from "dayjs";
 import states from "../utils/states";
+import { useEmployeeContext } from "../context/EmployeeContext";
 
 const EmployeeForm = () => {
+  const { addEmployee } = useEmployeeContext(); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    dateOfBirth: "", 
+    dateOfBirth: "",
     startDate: "",
     department: null,
     street: "",
@@ -56,15 +58,14 @@ const EmployeeForm = () => {
   const saveEmployee = () => {
     if (!validateForm()) return;
 
-    const employees = JSON.parse(localStorage.getItem("employees")) || [];
-    employees.push({
+
+    addEmployee({
       ...formData,
-      dateOfBirth: dayjs(formData.dateOfBirth).format("YYYY-MM-DD"), 
-      startDate: dayjs(formData.startDate).format("YYYY-MM-DD"), 
+      dateOfBirth: dayjs(formData.dateOfBirth).format("YYYY-MM-DD"),
+      startDate: dayjs(formData.startDate).format("YYYY-MM-DD"),
       state: formData.state ? formData.state.value : null,
       department: formData.department ? formData.department.value : null,
     });
-    localStorage.setItem("employees", JSON.stringify(employees));
     setIsModalOpen(true);
   };
 

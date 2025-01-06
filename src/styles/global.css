@@ -22,3 +22,10 @@ table tr:nth-child(even) { background-color: #9ACD32; }
 .modal button:hover { background-color: #e60000; }
 .zipcode { background-color: white; }
 h1 { display: flex; justify-content: center; align-items: center; }
+
+input{background-color: white; color:black}
+select{
+color:black;
+
+
+}

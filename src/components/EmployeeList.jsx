@@ -1,8 +1,36 @@
 import React from "react";
-import { useTable } from "react-table";
-import PropTypes from "prop-types";
+import { useTable, usePagination, useGlobalFilter } from "react-table";
+import PropTypes from "prop-types"; 
+import { useEmployeeContext } from "../context/EmployeeContext"; 
 
-const EmployeeList = ({ employees = [], onDelete = () => {} }) => {
+
+const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
+  return (
+    <div style={{ marginBottom: "10px" }}>
+      <input
+        value={globalFilter || ""}
+        onChange={(e) => setGlobalFilter(e.target.value || undefined)}
+        placeholder="Search..."
+        style={{
+          padding: "8px",
+          marginRight: "10px",
+          width: "300px",
+          border: "1px solid #ddd",
+        }}
+      />
+    </div>
+  );
+};
+
+GlobalFilter.propTypes = {
+  globalFilter: PropTypes.string,
+  setGlobalFilter: PropTypes.func.isRequired,
+};
+
+const EmployeeList = () => {
+  const { employees, deleteEmployee } = useEmployeeContext(); 
+
+
   const columns = React.useMemo(
     () => [
       { Header: "First Name", accessor: "firstName" },
@@ -16,31 +44,64 @@ const EmployeeList = ({ employees = [], onDelete = () => {} }) => {
       { Header: "Zip Code", accessor: "zipCode" },
       {
         Header: "Actions",
-        // eslint-disable-next-line react/prop-types
         Cell: ({ row }) => (
-          // eslint-disable-next-line react/prop-types
-          <button onClick={() => onDelete(row.index)}>Delete</button>
+          <button onClick={() => deleteEmployee(row.index)}>Delete</button>
         ),
+        disableSortBy: true, 
       },
     ],
-    [onDelete]
+    [deleteEmployee]
   );
+
 
   const data = React.useMemo(() => employees, [employees]);
 
- 
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-  useTable({ columns, data, manualPagination: true, pageSize: 10 });
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    page, 
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize, globalFilter },
+    setGlobalFilter,
+  } = useTable(
+    {
+      columns,
+      data,
+      initialState: { pageIndex: 0, pageSize: 10 }, 
+    },
+    useGlobalFilter, 
+    usePagination 
+  );
 
   return (
     <div className="global-container">
-      <table {...getTableProps()}>
+
+      <GlobalFilter globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+
+
+      <table {...getTableProps()} style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={`header-${headerGroup.id}`}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()} key={`header-col-${column.id}`}>
+                <th
+                  {...column.getHeaderProps()}
+                  key={`header-col-${column.id}`}
+                  style={{
+                    padding: "10px",
+                    borderBottom: "2px solid #ddd",
+                    textAlign: "left",
+                  }}
+                >
                   {column.render("Header")}
                 </th>
               ))}
@@ -48,12 +109,20 @@ const EmployeeList = ({ employees = [], onDelete = () => {} }) => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
+          {page.map((row) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()} key={`row-${row.id}`}>
                 {row.cells.map((cell) => (
-                  <td {...cell.getCellProps()} key={`cell-${row.id}-${cell.column.id}`}>
+                  <td
+                    {...cell.getCellProps()}
+                    key={`cell-${row.id}-${cell.column.id}`}
+                    style={{
+                      padding: "10px",
+                      borderBottom: "1px solid #ddd",
+                      textAlign: "left",
+                    }}
+                  >
                     {cell.render("Cell")}
                   </td>
                 ))}
@@ -62,6 +131,50 @@ const EmployeeList = ({ employees = [], onDelete = () => {} }) => {
           })}
         </tbody>
       </table>
+
+      <div style={{ marginTop: "20px" }}>
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          {"<<"}
+        </button>
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          {"<"}
+        </button>
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          {">"}
+        </button>
+        <button onClick={() => gotoPage(pageOptions.length - 1)} disabled={!canNextPage}>
+          {">>"}
+        </button>
+        <span style={{ marginLeft: "10px", marginRight: "10px" }}>
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>
+        </span>
+        <span>
+          | Go to page:{" "}
+          <input
+            type="number"
+            defaultValue={pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              gotoPage(page);
+            }}
+            style={{ width: "50px", marginLeft: "5px", marginRight: "10px" }}
+          />
+        </span>
+        <select
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
+          style={{ padding: "5px", background: "white" }}
+        >
+          {[10, 20, 30, 40, 50].map((size) => (
+            <option key={size} value={size}>
+              Show {size}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };
@@ -80,8 +193,11 @@ EmployeeList.propTypes = {
       state: PropTypes.string.isRequired,
       zipCode: PropTypes.string.isRequired,
     })
-  ).isRequired,
-  onDelete: PropTypes.func.isRequired, // Validate onDelete function
+  ),
+  deleteEmployee: PropTypes.func, 
+  row: PropTypes.shape({ 
+    index: PropTypes.number.isRequired,
+  }),
 };
 
 export default EmployeeList;
